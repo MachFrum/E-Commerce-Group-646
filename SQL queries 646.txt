@@ -1,0 +1,372 @@
+CREATE DATABASE EcommerceDB;
+-- Group 646 MySQL Implementation
+
+USE EcommerceDB;
+-- Create brand table
+CREATE TABLE brand (
+    brand_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    description TEXT,
+    logo_url VARCHAR(255),
+    website VARCHAR(255),
+    country_of_origin VARCHAR(50),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Create product_category table
+CREATE TABLE product_category (
+    category_id INT AUTO_INCREMENT PRIMARY KEY,
+    parent_category_id INT NULL,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    image_url VARCHAR(255),
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (parent_category_id) REFERENCES product_category(category_id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+    INDEX idx_parent_category (parent_category_id),
+    INDEX idx_category_name (name)
+);
+
+-- Create color table
+CREATE TABLE color (
+    color_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    hex_code VARCHAR(7) NOT NULL UNIQUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Create size_category table
+CREATE TABLE size_category (
+    size_category_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    description TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Create size_option table
+CREATE TABLE size_option (
+    size_option_id INT AUTO_INCREMENT PRIMARY KEY,
+    size_category_id INT NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    code VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (size_category_id) REFERENCES size_category(size_category_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    UNIQUE KEY uk_size_option (size_category_id, code),
+    INDEX idx_size_name (name)
+);
+
+-- Create attribute_category table
+CREATE TABLE attribute_category (
+    attribute_category_id INT AUTO_INCREMENT PRIMARY KEY,
+    parent_attribute_category_id INT NULL,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    description TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (parent_attribute_category_id)
+      REFERENCES attribute_category(attribute_category_id)
+      ON UPDATE CASCADE
+      ON DELETE SET NULL,
+    INDEX idx_parent_attr_category (parent_attribute_category_id)
+);
+
+-- Create attribute_type table
+CREATE TABLE attribute_type (
+    attribute_type_id INT AUTO_INCREMENT PRIMARY KEY,
+    attribute_category_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (attribute_category_id) REFERENCES attribute_category(attribute_category_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    UNIQUE KEY uk_attribute_type (attribute_category_id, name),
+    INDEX idx_attribute_type_name (name)
+);
+
+-- Create product table
+CREATE TABLE product (
+    product_id INT AUTO_INCREMENT PRIMARY KEY,
+    category_id INT NOT NULL,
+    brand_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    is_featured BOOLEAN NOT NULL DEFAULT FALSE,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES product_category(category_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    FOREIGN KEY (brand_id) REFERENCES brand(brand_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    INDEX idx_product_name (name),
+    INDEX idx_product_category (category_id),
+    INDEX idx_product_brand (brand_id),
+    INDEX idx_product_featured (is_featured),
+    INDEX idx_product_active (is_active)
+);
+
+-- Create product_image table
+CREATE TABLE product_image (
+    image_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    image_url VARCHAR(255) NOT NULL,
+    alt_text VARCHAR(255),
+    is_primary BOOLEAN NOT NULL DEFAULT FALSE,
+    display_order INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    INDEX idx_product_image (product_id),
+    INDEX idx_primary_image (is_primary)
+);
+
+-- Create product_attribute table
+CREATE TABLE product_attribute (
+    product_attribute_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    attribute_type_id INT NOT NULL,
+    value VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (attribute_type_id) REFERENCES attribute_type(attribute_type_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    UNIQUE KEY uk_product_attribute (product_id, attribute_type_id),
+    INDEX idx_product_attribute_value (value)
+);
+
+-- Create product_variation table
+CREATE TABLE product_variation (
+    variation_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    color_id INT NOT NULL,
+    size_option_id INT NOT NULL,
+    sku VARCHAR(50) NOT NULL UNIQUE,
+    price DECIMAL(10,2) NOT NULL,
+    sale_price DECIMAL(10,2),
+    quantity_in_stock INT NOT NULL DEFAULT 0,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (color_id) REFERENCES color(color_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    FOREIGN KEY (size_option_id) REFERENCES size_option(size_option_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    UNIQUE KEY uk_product_variation (product_id, color_id, size_option_id),
+    INDEX idx_variation_sku (sku),
+    INDEX idx_variation_price (price),
+    INDEX idx_variation_stock (quantity_in_stock),
+    INDEX idx_variation_active (is_active)
+);
+
+-- Create product_item table
+CREATE TABLE product_item (
+    item_id INT AUTO_INCREMENT PRIMARY KEY,
+    variation_id INT NOT NULL,
+    barcode VARCHAR(50) NOT NULL UNIQUE,
+    weight DECIMAL(8,2),
+    weight_unit VARCHAR(10),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (variation_id) REFERENCES product_variation(variation_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    INDEX idx_item_barcode (barcode)
+);
+
+-- Create customer table
+CREATE TABLE customer (
+    customer_id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    phone VARCHAR(20),
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_customer_email (email),
+    INDEX idx_customer_name (last_name, first_name)
+);
+
+-- Create address table
+CREATE TABLE address (
+    address_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    address_line1 VARCHAR(100) NOT NULL,
+    address_line2 VARCHAR(100),
+    city VARCHAR(50) NOT NULL,
+    state VARCHAR(50),
+    postal_code VARCHAR(20) NOT NULL,
+    country VARCHAR(50) NOT NULL,
+    is_default BOOLEAN NOT NULL DEFAULT FALSE,
+    address_type ENUM('billing','shipping') NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES customer(customer_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    INDEX idx_address_customer (customer_id),
+    INDEX idx_address_country (country),
+    INDEX idx_address_city (city)
+);
+
+-- Create order table
+CREATE TABLE `orders` (
+    order_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    shipping_address_id INT NOT NULL,
+    billing_address_id INT NOT NULL,
+    order_status ENUM('pending','processing','shipped','delivered','cancelled') NOT NULL DEFAULT 'pending',
+    payment_status ENUM('pending','paid','failed','refunded') NOT NULL DEFAULT 'pending',
+    payment_method VARCHAR(50) NOT NULL,
+    shipping_method VARCHAR(50) NOT NULL,
+    subtotal DECIMAL(10,2) NOT NULL,
+    shipping_cost DECIMAL(10,2) NOT NULL,
+    tax_amount DECIMAL(10,2) NOT NULL,
+    discount_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    total_amount DECIMAL(10,2) NOT NULL,
+    notes TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES customer(customer_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    FOREIGN KEY (shipping_address_id) REFERENCES address(address_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    FOREIGN KEY (billing_address_id) REFERENCES address(address_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    INDEX idx_order_customer (customer_id),
+    INDEX idx_order_status (order_status),
+    INDEX idx_order_payment_status (payment_status),
+    INDEX idx_order_created (created_at)
+);
+
+-- Create order_item table
+CREATE TABLE order_item (
+    order_item_id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    product_variation_id INT NOT NULL,
+    quantity INT NOT NULL,
+    unit_price DECIMAL(10,2) NOT NULL,
+    subtotal DECIMAL(10,2) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES `orders`(order_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (product_variation_id) REFERENCES product_variation(variation_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    INDEX idx_order_item_order (order_id),
+    INDEX idx_order_item_product (product_variation_id)
+);
+
+-- Create payment table
+CREATE TABLE payment (
+    payment_id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    payment_method VARCHAR(50) NOT NULL,
+    transaction_id VARCHAR(100) NOT NULL UNIQUE,
+    amount DECIMAL(10,2) NOT NULL,
+    currency VARCHAR(3) NOT NULL,
+    status ENUM('pending','completed','failed','refunded') NOT NULL DEFAULT 'pending',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES `orders`(order_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    INDEX idx_payment_order (order_id),
+    INDEX idx_payment_status (status),
+    INDEX idx_payment_transaction (transaction_id)
+);
+
+-- Create shipping table
+CREATE TABLE shipping (
+    shipping_id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    tracking_number VARCHAR(100),
+    carrier VARCHAR(50) NOT NULL,
+    shipping_method VARCHAR(50) NOT NULL,
+    shipping_cost DECIMAL(10,2) NOT NULL,
+    status ENUM('pending','processing','shipped','delivered','returned') NOT NULL DEFAULT 'pending',
+    estimated_delivery_date DATE,
+    actual_delivery_date DATE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES `orders`(order_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    INDEX idx_shipping_tracking (tracking_number),
+    INDEX idx_shipping_status (status)
+);
+
+-- Create promotion table (A bonus table by group 646)
+CREATE TABLE promotion (
+    promotion_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    discount_type ENUM('percentage','fixed') NOT NULL,
+    discount_value DECIMAL(10,2) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    minimum_order_amount DECIMAL(10,2),
+    usage_limit INT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_promotion_active (is_active),
+    INDEX idx_promotion_dates (start_date, end_date)
+);
+
+-- Create review table (A bonus table by group 646)
+CREATE TABLE review (
+    review_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    customer_id INT NOT NULL,
+    order_id INT NOT NULL,
+    rating INT NOT NULL,
+    title VARCHAR(255),
+    comment TEXT,
+    is_verified_purchase BOOLEAN NOT NULL DEFAULT FALSE,
+    is_approved BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (customer_id) REFERENCES customer(customer_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (order_id) REFERENCES `orders`(order_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    UNIQUE KEY uk_customer_product_review (customer_id, product_id, order_id),
+    INDEX idx_review_product (product_id),
+    INDEX idx_review_rating (rating),
+    INDEX idx_review_approved (is_approved)
+);

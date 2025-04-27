@@ -1,0 +1,160 @@
+USE Ecommercedb;
+-- Sample data for brand table
+INSERT INTO brand (name, description, logo_url, website, country_of_origin) VALUES
+('Kikoy Kenya', 'Traditional Kenyan textile manufacturer specializing in colorful cotton fabrics', 'https://peter.com/logos/kikoy.png', 'https://kikoykenya.co.ke', 'Kenya'),
+('Maasai Treads', 'Handcrafted footwear made by Maasai artisans using sustainable materials', 'https://jasper.com/logos/maasai_treads.png', 'https://maasaitreads.com', 'Tanzania'),
+('Vivo Africa', 'Leading African smartphone manufacturer with focus on affordable technology', 'https://tsholo.com/logos/vivo_africa.png', 'https://vivoafrica.com', 'South Africa'),
+('Kitengela Glass', 'Renowned Kenyan glass art studio creating handblown decorative items', 'https://milkah.com/logos/kitengela.png', 'https://kitengelaglass.co.ke', 'Kenya'),
+('Adinkra Designs', 'Ghanaian fashion house specializing in traditional symbolic patterns', 'https://enoch.com/logos/adinkra.png', 'https://adinkradesigns.com', 'Ghana');
+
+-- Sample data for product_category table
+INSERT INTO product_category (parent_category_id, name, description, image_url, is_active) VALUES
+(NULL, 'African Fashion', 'Traditional and modern clothing with African designs', 'https://peter.com/categories/african_fashion.jpg', TRUE),
+(NULL, 'Home & Living', 'Home decor and household items', 'https://jasper.com/categories/home_living.jpg', TRUE),
+(NULL, 'Electronics', 'Gadgets and electronic devices', 'https://tsholo.com/categories/electronics.jpg', TRUE),
+(1, 'Kitenge Clothing', 'Colorful East African printed fabric clothing', 'https://milkah.com/categories/kitenge.jpg', TRUE),
+(2, 'African Art', 'Handcrafted artwork and sculptures', 'https://enoch.com/categories/african_art.jpg', TRUE);
+
+-- Sample data for color table
+INSERT INTO color (name, hex_code) VALUES
+('Savanna Gold', '#DAA520'),
+('Serengeti Brown', '#8B4513'),
+('Nairobi Blue', '#1E90FF'),
+('Maasai Red', '#B22222'),
+('Kilimanjaro White', '#F5F5F5');
+
+-- Sample data for size_category table
+INSERT INTO size_category (name, description) VALUES
+('Kenyan Clothing', 'Standard sizing for Kenyan apparel'),
+('African Footwear', 'Sizing for shoes and sandals'),
+('Electronics', 'Size classifications for electronic devices'),
+('Home Decor', 'Size ranges for decorative items'),
+('Jewelry', 'Size options for African jewelry');
+
+-- Sample data for size_option table
+INSERT INTO size_option (size_category_id, name, code) VALUES
+(1, 'Small', 'S'),
+(1, 'Medium', 'M'),
+(1, 'Large', 'L'),
+(2, '39', '39'),
+(2, '42', '42');
+
+-- Sample data for attribute_category table
+INSERT INTO attribute_category (name, description) VALUES
+('Material', 'Type of material used in product construction'),
+('Origin', 'Cultural or geographical origin of design'),
+('Technique', 'Manufacturing or artistic technique'),
+('Sustainability', 'Environmental and ethical production aspects'),
+('Technical Specs', 'Technical specifications for electronics');
+
+-- Sample data for attribute_type table
+INSERT INTO attribute_type (attribute_category_id, name, description) VALUES
+(1, 'Fabric Type', 'Primary fabric material'),
+(1, 'Wood Type', 'Type of wood used in product'),
+(2, 'Tribal Influence', 'Specific tribal design origins'),
+(3, 'Handcraft Method', 'Specific handcrafting technique'),
+(4, 'Fair Trade Certified', 'Fair trade certification status');
+
+-- Sample data for product table
+INSERT INTO product (category_id, brand_id, name, description, is_featured, is_active) VALUES
+(4, 1, 'Kitenge Wrap Dress', 'Beautiful wrap dress made from authentic Kenyan kitenge fabric with traditional patterns', TRUE, TRUE),
+(5, 4, 'Savanna Sunset Glass Bowl', 'Hand-blown decorative glass bowl with colors inspired by African sunsets', FALSE, TRUE),
+(3, 3, 'Savanna Pro Smartphone', 'Affordable smartphone with dual SIM capability and long battery life for rural areas', TRUE, TRUE),
+(1, 5, 'Adinkra Symbol Shirt', 'Cotton shirt featuring traditional Ghanaian Adinkra symbols', FALSE, TRUE),
+(2, 2, 'Maasai Beaded Sandals', 'Handcrafted leather sandals with colorful Maasai beadwork', TRUE, TRUE);
+
+-- Sample data for product_image table
+INSERT INTO product_image (product_id, image_url, alt_text, is_primary, display_order) VALUES
+(1, 'https://jasper.com/products/kitenge_dress_front.jpg', 'Kitenge Wrap Dress Front View', TRUE, 1),
+(1, 'https://tsholo.com/products/kitenge_dress_back.jpg', 'Kitenge Wrap Dress Back View', FALSE, 2),
+(2, 'https://milkah.com/products/glass_bowl_main.jpg', 'Savanna Sunset Glass Bowl', TRUE, 1),
+(3, 'https://enoch.com/products/savanna_pro_front.jpg', 'Savanna Pro Smartphone Front', TRUE, 1),
+(4, 'https://peter.com/products/adinkra_shirt_main.jpg', 'Adinkra Symbol Shirt', TRUE, 1);
+
+-- Sample data for product_attribute table
+INSERT INTO product_attribute (product_id, attribute_type_id, value) VALUES
+(1, 1, 'Cotton Kitenge'),
+(1, 3, 'Kenyan Coastal'),
+(2, 4, 'Recycled Glass'),
+(3, 5, 'Yes - Fairtrade International'),
+(4, 3, 'Kente Weaving Inspired');
+
+-- Sample data for product_variation table
+INSERT INTO product_variation (product_id, color_id, size_option_id, sku, price, sale_price, quantity_in_stock, is_active) VALUES
+(1, 4, 1, 'KK-DRESS-RED-S', 4500.00, 3800.00, 15, TRUE),
+(1, 3, 2, 'KK-DRESS-BLUE-M', 4500.00, NULL, 8, TRUE),
+(2, 1, 4, 'KG-BOWL-GOLD-39', 3200.00, 2800.00, 5, TRUE),
+(3, 5, 3, 'VA-PHONE-WHITE-L', 12000.00, NULL, 25, TRUE),
+(4, 2, 2, 'AD-SHIRT-BROWN-M', 2800.00, 2500.00, 12, TRUE);
+
+-- Sample data for product_item table
+INSERT INTO product_item (variation_id, barcode, weight, weight_unit) VALUES
+(1, 'KEN123456781', 0.4, 'kg'),
+(2, 'KEN123456782', 0.4, 'kg'),
+(3, 'KEN123456783', 1.2, 'kg'),
+(4, 'KEN123456784', 0.2, 'kg'),
+(5, 'KEN123456785', 0.3, 'kg');
+
+-- Sample data for customer table
+INSERT INTO customer (first_name, last_name, email, phone, password_hash) VALUES
+('Wanjiku', 'Kamau', 'wanjiku@example.com', '+254712345678', '$2a$12$1234567890123456789012'),
+('Otieno', 'Odhiambo', 'otieno@example.com', '+254723456789', '$2a$12$2345678901234567890123'),
+('Amina', 'Mohamed', 'amina@example.com', '+254734567890', '$2a$12$3456789012345678901234'),
+('Kwame', 'Nkrumah', 'kwame@example.com', '+233512345678', '$2a$12$4567890123456789012345'),
+('Nala', 'Adebayo', 'nala@example.com', '+234812345678', '$2a$12$5678901234567890123456');
+
+-- Sample data for address table
+INSERT INTO address (customer_id, address_line1, address_line2, city, state, postal_code, country, is_default, address_type) VALUES
+(1, '123 Kimathi Street', 'Apartment 4B', 'Nairobi', NULL, '00100', 'Kenya', TRUE, 'shipping'),
+(1, '123 Kimathi Street', 'Apartment 4B', 'Nairobi', NULL, '00100', 'Kenya', TRUE, 'billing'),
+(2, '456 Oginga Odinga Road', NULL, 'Kisumu', NULL, '40100', 'Kenya', TRUE, 'shipping'),
+(3, '789 Biashara Street', 'Floor 3', 'Mombasa', NULL, '80100', 'Kenya', TRUE, 'shipping'),
+(4, '321 Independence Avenue', NULL, 'Accra', NULL, 'GA-145-9077', 'Ghana', TRUE, 'shipping');
+
+-- Sample data for order table
+INSERT INTO `orders` (customer_id, shipping_address_id, billing_address_id, order_status, payment_status, payment_method, shipping_method, subtotal, shipping_cost, tax_amount, discount_amount, total_amount, notes) VALUES
+(1, 1, 2, 'delivered', 'paid', 'M-Pesa', 'Standard Delivery', 4500.00, 350.00, 450.00, 700.00, 4600.00, 'Please deliver in the morning'),
+(2, 3, 3, 'processing', 'paid', 'M-Pesa', 'Express Delivery', 3200.00, 500.00, 320.00, 0.00, 4020.00, NULL),
+(3, 4, 4, 'shipped', 'paid', 'Credit Card', 'Standard Delivery', 12000.00, 350.00, 1200.00, 1000.00, 12550.00, 'Fragile item, handle with care'),
+(4, 5, 5, 'pending', 'pending', 'Mobile Money', 'International Shipping', 2800.00, 1200.00, 280.00, 0.00, 4280.00, NULL),
+(1, 1, 2, 'cancelled', 'refunded', 'M-Pesa', 'Standard Delivery', 3200.00, 350.00, 320.00, 0.00, 3870.00, 'Customer requested cancellation');
+
+-- Sample data for order_item table
+INSERT INTO order_item (order_id, product_variation_id, quantity, unit_price, subtotal) VALUES
+(1, 1, 1, 3800.00, 3800.00),
+(1, 3, 1, 700.00, 700.00),
+(2, 3, 1, 3200.00, 3200.00),
+(3, 4, 1, 12000.00, 12000.00),
+(4, 5, 1, 2800.00, 2800.00);
+
+-- Sample data for payment table
+INSERT INTO payment (order_id, payment_method, transaction_id, amount, currency, status) VALUES
+(1, 'M-Pesa', 'MPESA123456789', 4600.00, 'KES', 'completed'),
+(2, 'M-Pesa', 'MPESA234567890', 4020.00, 'KES', 'completed'),
+(3, 'Credit Card', 'CARD345678901', 12550.00, 'KES', 'completed'),
+(4, 'Mobile Money', 'MOMO456789012', 4280.00, 'GHS', 'pending'),
+(1, 'M-Pesa', 'MPESA567890123', 3870.00, 'KES', 'refunded');
+
+-- Sample data for shipping table
+INSERT INTO shipping (order_id, tracking_number, carrier, shipping_method, shipping_cost, status, estimated_delivery_date, actual_delivery_date) VALUES
+(1, 'SENDY123456789', 'Sendy', 'Standard Delivery', 350.00, 'delivered', '2025-04-15', '2025-04-14'),
+(2, 'SENDY234567890', 'Sendy', 'Express Delivery', 500.00, 'processing', '2025-04-26', NULL),
+(3, 'WELLS345678901', 'Wells Fargo', 'Standard Delivery', 350.00, 'shipped', '2025-04-28', NULL),
+(4, 'DHL456789012', 'DHL', 'International Shipping', 1200.00, 'pending', '2025-05-05', NULL),
+(5, 'SENDY134567890', 'Sendy', 'Standard Delivery', 350.00, 'pending', '2025-04-30', NULL);
+
+-- Sample data for promotion table
+INSERT INTO promotion (name, description, discount_type, discount_value, start_date, end_date, is_active, minimum_order_amount, usage_limit) VALUES
+('Madaraka Day Sale', 'Special discounts to celebrate Kenyan Madaraka Day', 'percentage', 15.00, '2025-05-25', '2025-06-02', TRUE, 2000.00, 100),
+('New Customer Discount', 'Welcome discount for first-time customers', 'fixed', 500.00, '2025-01-01', '2025-12-31', TRUE, 1000.00, NULL),
+('Kitenge Collection Launch', 'Special promotion for our new Kitenge collection', 'percentage', 10.00, '2025-04-01', '2025-04-30', TRUE, NULL, NULL),
+('Free Shipping Weekend', 'Free shipping on all orders above 5000 KES', 'fixed', 350.00, '2025-04-26', '2025-04-28', TRUE, 5000.00, 50),
+('Flash Sale - African Art', 'Limited time offer on selected African art pieces', 'percentage', 25.00, '2025-05-10', '2025-05-12', FALSE, 3000.00, 30);
+
+-- Sample data for review table
+INSERT INTO review (product_id, customer_id, order_id, rating, title, comment, is_verified_purchase, is_approved) VALUES
+(1, 1, 1, 5, 'Beautiful Dress!', 'The kitenge fabric is authentic and the colors are vibrant. The dress fits perfectly and I received many compliments.', TRUE, TRUE),
+(2, 1, 1, 4, 'Lovely Bowl', 'The glass bowl is beautiful and well-crafted. The colors really do remind me of an African sunset.', TRUE, TRUE),
+(3, 3, 3, 5, 'Great Phone for the Price', 'This phone has excellent battery life which is perfect since we have frequent power outages in my area. The dual SIM feature is very useful.', TRUE, TRUE),
+(4, 4, 4, 3, 'Nice Shirt but Sizing Issue', 'The Adinkra symbols are beautiful and authentic, but the shirt runs smaller than expected.', FALSE, TRUE),
+(5, 2, 2, 5, 'Stunning Craftsmanship', 'These sandals are not only comfortable but the beadwork is exquisite. True Maasai craftsmanship!', TRUE, TRUE);
