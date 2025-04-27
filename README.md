@@ -1,7 +1,3 @@
-Here’s your **EcommerceDB Schema Documentation** revamped with flair, emojis, and a punchy tone — all while keeping the master content’s accuracy intact! 🚀  
-
----
-
 # 🌟 **EcommerceDB Schema: Your Ultimate Guide to a Rock-Solid E-Commerce Database** 🛒  
 
 ## **Overview**  
@@ -63,5 +59,3 @@ SQL files live in the `schema/` directory. Go forth and query!
 *Crafted with ❤️ by Group 646 — your e-commerce database heroes! 👨💻👩💻*  
 
 ---  
-
-How's this? Fun yet precise, with all the master's facts dressed in party clothes! 🎩✨
