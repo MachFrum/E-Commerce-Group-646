@@ -18,8 +18,8 @@ Our schema isn’t just smart—it’s *genius*. Here’s why:
 
 ### **Core Entities**  
 - **🛍️ `brand`**: Store brand swag—names, logos, websites, even their home country!  
-- **📂 `product_category`**: Organize products into nested categories (think "Electronics → Phones → Accessories").  
-- **🎨 `color` + **📏 `size_category`/`size_option`**: Manage variants like a pro. Sizes group into categories (e.g., "Shoe Sizes: US 8, EU 41").  
+- **📂 `product_category`**: Organize products into nested categories (think "Electronics → Phones → Accessories").
+- 🎨 `color` + **📏 `size_category`/`size_option`**: Manage variants like a pro. Sizes group into categories (e.g., "Shoe Sizes: US 8, EU 41").  
 - **🏷️ `attribute_category`/`attribute_type`**: Tag products with custom traits ("Material: Silk", "Weight: 500g"). Sub-categories? We’ve got those too!  
 
 ### **Products & Variations 🧩**  
